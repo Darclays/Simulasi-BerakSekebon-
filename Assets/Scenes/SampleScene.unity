@@ -200,8 +200,8 @@ MonoBehaviour:
   m_PlayOnAwake: 1
   m_LoopMode: 1
   m_Method: 1
-  m_Duration: 172.61996
-  m_MaxSpeed: 5
+  m_Duration: 2.8769996
+  m_MaxSpeed: 300
   m_EasingMode: 0
   m_AlignmentMode: 1
   m_ObjectForwardAxis: 2
@@ -753,26 +753,26 @@ MonoBehaviour:
   m_Container: {fileID: 1038021194}
   m_ItemsToInstantiate:
   - prefab: {fileID: 0}
-    Prefab: {fileID: 2171760524236046288, guid: 5134ed3777d4c484d8fe19fd21f2cc1e, type: 3}
+    Prefab: {fileID: 919132149155446097, guid: 7775a3234873a5d42982c013f804e686, type: 3}
     probability: 0
     Probability: 0
   m_Method: 1
   m_Space: 0
-  m_Spacing: {x: 110, y: 110}
-  m_Up: 1
-  m_Forward: 2
+  m_Spacing: {x: 3, y: 3}
+  m_Up: 2
+  m_Forward: 3
   m_PositionOffset:
-    setup: 0
-    min: {x: 0, y: 0, z: 0}
-    max: {x: 0, y: 0, z: 0}
+    setup: 1
+    min: {x: 0, y: 0.68, z: 0}
+    max: {x: 0, y: 1.23, z: 0}
     randomX: 0
     randomY: 0
     randomZ: 0
     space: 0
   m_RotationOffset:
-    setup: 0
-    min: {x: 0, y: 0, z: 0}
-    max: {x: 0, y: 0, z: 0}
+    setup: 1
+    min: {x: 0, y: 90, z: 0}
+    max: {x: 90, y: 90, z: 0}
     randomX: 0
     randomY: 0
     randomZ: 0
