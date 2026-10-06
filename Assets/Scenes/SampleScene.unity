@@ -201,6 +201,7 @@ GameObject:
   - component: {fileID: 397546528}
   - component: {fileID: 397546530}
   - component: {fileID: 397546529}
+  - component: {fileID: 397546531}
   m_Layer: 0
   m_Name: KIHA
   m_TagString: Untagged
@@ -388,6 +389,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &397546531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397546525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea9ecc878d5c94c42b898b7b58cc5f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::trackSound
+  trainController: {fileID: 397546528}
+  idle1: {fileID: 8300000, guid: f1a400942ef38214f9c49ee84058254b, type: 3}
+  idle2: {fileID: 8300000, guid: 41c5b80aaf9cb3946875a112df72b2a1, type: 3}
+  idle3: {fileID: 8300000, guid: aa4db566db6ba99499d1118293ff51f8, type: 3}
+  idle4: {fileID: 8300000, guid: da0b6cf7e979c3e45b23a4fa4ab8c232, type: 3}
+  idle5: {fileID: 8300000, guid: 90794b172b7258e4a940087c6f4c0560, type: 3}
+  idle6: {fileID: 8300000, guid: bfefde13574036d45a5b7219ccf0c542, type: 3}
+  idle7: {fileID: 8300000, guid: 9d64486f0a93e4e4691db4c8f0ff9eec, type: 3}
+  idle8: {fileID: 8300000, guid: 4524f3e6f6f0f3547bf4e522e1618942, type: 3}
+  idle9: {fileID: 8300000, guid: debcd557c2fb24d4084e9942fcd825b3, type: 3}
+  volumeInDB: 5
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
