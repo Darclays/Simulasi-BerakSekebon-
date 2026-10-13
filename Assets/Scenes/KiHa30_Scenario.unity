@@ -1131,7 +1131,7 @@ GameObject:
   - component: {fileID: 889047770}
   - component: {fileID: 889047769}
   m_Layer: 0
-  m_Name: Spline
+  m_Name: MainWaySpline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
