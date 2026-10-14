@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; // Diperlukan untuk Coroutine
 
 [RequireComponent(typeof(AudioSource))]
 public class engineSoundKiha30 : MonoBehaviour
@@ -6,6 +7,12 @@ public class engineSoundKiha30 : MonoBehaviour
     [Header("Reference to Controller")]
     [Tooltip("Masukkan GameObject yang memiliki script keretaController2")]
     public keretaController2 trainController;
+
+    [Header("Animator Reference")]
+    [Tooltip("Masukkan Animator yang ada pada karakter masinis atau model kereta")]
+    public Animator trainAnimator;
+    [Tooltip("Nama parameter Trigger pada Animator untuk animasi klakson")]
+    public string hornAnimatorParam = "PlayHorn";
 
     [Header("Audio Horn (Klakson)")]
     [Tooltip("File audio klakson single")]
@@ -39,6 +46,7 @@ public class engineSoundKiha30 : MonoBehaviour
 
     private bool isTransitioning = false;
     private AudioClip targetIdleAfterTransition = null;
+    private bool isHornPlaying = false; // Mencegah spam tombol klakson
 
     void Awake()
     {
@@ -46,13 +54,17 @@ public class engineSoundKiha30 : MonoBehaviour
         engineAudioSource.playOnAwake = false;
         engineAudioSource.loop = true;
 
-        // Jika AudioSource khusus horn tidak di-assign di Inspector,
-        // buat AudioSource komponen tambahan secara otomatis untuk klakson
         if (hornAudioSource == null)
         {
             hornAudioSource = gameObject.AddComponent<AudioSource>();
             hornAudioSource.playOnAwake = false;
             hornAudioSource.loop = false;
+        }
+
+        // Otomatis mencari komponen Animator jika belum di-assign di Inspector
+        if (trainAnimator == null)
+        {
+            trainAnimator = GetComponent<Animator>();
         }
     }
 
@@ -63,7 +75,6 @@ public class engineSoundKiha30 : MonoBehaviour
             trainController = GetComponent<keretaController2>();
         }
 
-        // Jalankan audio Idle 1 saat awal game / berhenti total
         PlayIdleSound(idle1);
     }
 
@@ -78,14 +89,12 @@ public class engineSoundKiha30 : MonoBehaviour
             return;
         }
 
-        // Ambil data kecepatan dan notch langsung dari controller
         currentSpeed = trainController.currentSpeed;
         int currentNotch = trainController.currentNotch;
 
         // 1. Handling Audio Transisi Mesin (Up / Down)
         if (isTransitioning)
         {
-            // Jika klip transisi (Up/Down) selesai diputar, ganti ke Idle target
             if (!engineAudioSource.isPlaying)
             {
                 isTransitioning = false;
@@ -106,17 +115,17 @@ public class engineSoundKiha30 : MonoBehaviour
         {
             PlayIdleSound(idle1);
         }
-        // 3. Logika Akselerasi (Percepatan / Notch > 0)
+        // 3. Logika Akselerasi
         else if (currentNotch > 0 && currentSpeed > previousSpeed)
         {
             HandleAcceleration(currentNotch);
         }
-        // 4. Logika Deselerasi (Perlambatan / Notch < 0)
+        // 4. Logika Deselerasi
         else if (currentNotch < 0 && currentSpeed < previousSpeed)
         {
             HandleDeceleration();
         }
-        // 5. Logika Coasting / Stagnan (Notch N / 0, kecepatan konstan atau meluncur)
+        // 5. Logika Coasting / Stagnan
         else if (currentNotch == 0)
         {
             HandleCoastingIdle();
@@ -128,12 +137,11 @@ public class engineSoundKiha30 : MonoBehaviour
 
     private void HandleHornInput()
     {
-        if (Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.H) && !isHornPlaying)
         {
             if (hornClip != null)
             {
-                // Putar klakson tanpa mengganggu audio mesin
-                hornAudioSource.PlayOneShot(hornClip);
+                StartCoroutine(PlayHornRoutine());
             }
             else
             {
@@ -142,9 +150,28 @@ public class engineSoundKiha30 : MonoBehaviour
         }
     }
 
+    // Coroutine untuk mengatur pemutaran klakson dan animasi secara sinkron
+    private IEnumerator PlayHornRoutine()
+    {
+        isHornPlaying = true;
+
+        // 1. Putar Audio Klakson
+        hornAudioSource.PlayOneShot(hornClip);
+
+        // 2. Nyalakan Animasi via Animator Trigger
+        if (trainAnimator != null)
+        {
+            trainAnimator.SetTrigger(hornAnimatorParam);
+        }
+
+        // 3. Tunggu hingga durasi audio klakson selesai
+        yield return new WaitForSeconds(hornClip.length);
+
+        isHornPlaying = false;
+    }
+
     private void HandleAcceleration(int currentNotch)
     {
-        // P1: Akselerasi 1 - 20 km/h
         if (currentNotch == 1 && currentSpeed >= 1f && currentSpeed < 20f)
         {
             if (previousNotch != 1 || engineAudioSource.clip != up1_2)
@@ -152,7 +179,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(up1_2, idle2);
             }
         }
-        // P2: Akselerasi 20 - 40 km/h
         else if (currentNotch == 2 && currentSpeed >= 20f && currentSpeed < 40f)
         {
             if (previousNotch != 2 || engineAudioSource.clip != up2_3)
@@ -160,7 +186,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(up2_3, idle3);
             }
         }
-        // P3: Akselerasi 40 - 70 km/h
         else if (currentNotch == 3 && currentSpeed >= 40f && currentSpeed < 70f)
         {
             if (previousNotch != 3 || engineAudioSource.clip != up3_4)
@@ -168,7 +193,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(up3_4, idle4);
             }
         }
-        // P4: Akselerasi 70 - 90 km/h
         else if (currentNotch == 4 && currentSpeed >= 70f && currentSpeed < 90f)
         {
             if (previousNotch != 4 || engineAudioSource.clip != up4_5)
@@ -176,7 +200,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(up4_5, idle5);
             }
         }
-        // Jika mencapai batas atas kecepatan tier tanpa transisi aktif, masuk ke Idle Tier tersebut
         else if (currentSpeed >= 90f && currentNotch == 4)
         {
             PlayIdleSound(idle5);
@@ -185,7 +208,6 @@ public class engineSoundKiha30 : MonoBehaviour
 
     private void HandleDeceleration()
     {
-        // Deselerasi 100 -> 70 km/h
         if (previousSpeed >= 70f && currentSpeed < 100f && currentSpeed >= 70f)
         {
             if (engineAudioSource.clip != down5_4)
@@ -193,7 +215,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(down5_4, idle4);
             }
         }
-        // Deselerasi 70 -> 40 km/h
         else if (previousSpeed >= 40f && currentSpeed < 70f && currentSpeed >= 40f)
         {
             if (engineAudioSource.clip != down4_3)
@@ -201,7 +222,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(down4_3, idle4);
             }
         }
-        // Deselerasi 40 -> 20 km/h
         else if (previousSpeed >= 20f && currentSpeed < 40f && currentSpeed >= 20f)
         {
             if (engineAudioSource.clip != down3_2)
@@ -209,7 +229,6 @@ public class engineSoundKiha30 : MonoBehaviour
                 PlayTransitionSound(down3_2, idle3);
             }
         }
-        // Deselerasi 20 -> 1 km/h
         else if (previousSpeed >= 1f && currentSpeed < 20f && currentSpeed >= 1f)
         {
             if (engineAudioSource.clip != down2_1)
@@ -221,7 +240,6 @@ public class engineSoundKiha30 : MonoBehaviour
 
     private void HandleCoastingIdle()
     {
-        // Menentukan idle mana yang harus diputar berdasarkan kecepatan saat ini di posisi Netral (N)
         if (currentSpeed >= 90f)
         {
             PlayIdleSound(idle5);
@@ -258,11 +276,12 @@ public class engineSoundKiha30 : MonoBehaviour
         }
     }
 
+    private void PlayTransitionSpace(AudioClip transitionClip, AudioClip nextIdleClip) { /* Helper */ }
+
     private void PlayTransitionSound(AudioClip transitionClip, AudioClip nextIdleClip)
     {
         if (transitionClip == null)
         {
-            // Jika audio transisi tidak dimasukkan, langsung mainkan audio idle target
             PlayIdleSound(nextIdleClip);
             return;
         }
