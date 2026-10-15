@@ -3,7 +3,62 @@ guid: 4eaa30102b7bc94449c1d95136ddfa70
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Abu Lokomotif
+    second: {fileID: 2100000, guid: 46d951e6ad329284cad49931ec4fb506, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bantalan Rel Gelap
+    second: {fileID: 2100000, guid: 6d0b13db74185914bbd016a59df1fd4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Side02.002
+    second: {fileID: 2100000, guid: 1c4ec66153f99e144ae05edf669c5c99, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Side03.002
+    second: {fileID: 2100000, guid: 2c7208b5c697baa4cb60dff0207efec1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Side04.002
+    second: {fileID: 2100000, guid: 38a7d66ca21cce64ea621d0804207b75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Side40.002
+    second: {fileID: 2100000, guid: 51178092908b26748b4d0154ada18f34, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skirt01_Side03.002
+    second: {fileID: 2100000, guid: f4fe66f55a296ab46affb6627314d292, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skirt01_Side04.002
+    second: {fileID: 2100000, guid: f067e8cf6fe3b9541b071817a36cd3b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: merah
+    second: {fileID: 2100000, guid: 93c1f92e4ff26ec4dbed17f583bf5baa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: oren JNR
+    second: {fileID: 2100000, guid: 92f48c33484f4a74b8ee3d5f8ce84cd9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: window
+    second: {fileID: 2100000, guid: 96a8841fd1f095542b4042c429591ab3, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
