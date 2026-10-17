@@ -169,6 +169,10 @@ MonoBehaviour:
   maxZoom: 140
   rotationSpeedX: 300
   rotationSpeedY: 100
+  minVerticalAngle: -10
+  maxVerticalAngle: 60
+  rotationSmoothness: 15
+  zoomSmoothness: 15
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +326,7 @@ Transform:
   m_GameObject: {fileID: 656261964}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.29000092, y: 2.9899974, z: 0.41735077}
+  m_LocalPosition: {x: 0.29000092, y: 2.62, z: 0.41735077}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -342,10 +346,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::cinemachineCameraMovement
   cinemachineCam: {fileID: 1798668653}
   zoomSpeed: 7
-  minZoom: 3
-  maxZoom: 140
+  minZoom: 13
+  maxZoom: 40
   rotationSpeedX: 300
   rotationSpeedY: 100
+  minVerticalAngle: 12
+  maxVerticalAngle: 40
+  rotationSmoothness: 4
+  zoomSmoothness: 2
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1271,7 +1279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1691271178}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.019358201, y: 0.012415713, z: 0.00024040937, w: 0.99973553}
+  m_LocalRotation: {x: -0.010179814, y: 0.012417378, z: 0.00012642345, w: 0.9998711}
   m_LocalPosition: {x: 95.55, y: 2.21, z: 90.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1398,7 +1406,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 1
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -1525,7 +1533,7 @@ MonoBehaviour:
   TargetOffset: {x: -0.21, y: -0.04, z: -1.11}
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -1624,7 +1632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798668648}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.019358195, y: 0.01241571, z: 0.00024040924, w: 0.99973553}
+  m_LocalRotation: {x: -0.010179633, y: 0.012417375, z: 0.00012642062, w: 0.99987113}
   m_LocalPosition: {x: 95.55, y: 2.21, z: 90.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

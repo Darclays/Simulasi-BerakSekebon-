@@ -16,8 +16,23 @@ public class cinemachineCameraMovement : MonoBehaviour
     [SerializeField] private float rotationSpeedX = 300f;
     [SerializeField] private float rotationSpeedY = 200f;
 
+    [Header("Vertical Rotation Limits")]
+    [Tooltip("Sudut minimum kamera melihat ke bawah (derajat)")]
+    [SerializeField] private float minVerticalAngle = -10f;
+    [Tooltip("Sudut maksimum kamera melihat ke atas (derajat)")]
+    [SerializeField] private float maxVerticalAngle = 60f;
+
+    [Header("Smoothing Settings")]
+    [Tooltip("Kehalusan rotasi kamera")]
+    [SerializeField] private float rotationSmoothness = 15f;
+    [Tooltip("Kehalusan zoom kamera")]
+    [SerializeField] private float zoomSmoothness = 15f;
+
     private CinemachineOrbitalFollow orbitalFollow;
-    private CinemachineFollow followComponent;
+    
+    private float smoothMouseX = 0f;
+    private float smoothMouseY = 0f;
+    private float targetZoomRadius = 0f;
 
     private void Awake()
     {
@@ -29,89 +44,80 @@ public class cinemachineCameraMovement : MonoBehaviour
         if (cinemachineCam != null)
         {
             orbitalFollow = cinemachineCam.GetComponent<CinemachineOrbitalFollow>();
-            followComponent = cinemachineCam.GetComponent<CinemachineFollow>();
         }
     }
 
-    private void Update()
+    private void Start()
+    {
+        if (orbitalFollow != null)
+        {
+            targetZoomRadius = orbitalFollow.Orbits.Center.Radius;
+            targetZoomRadius = Mathf.Clamp(targetZoomRadius, minZoom, maxZoom);
+        }
+        else
+        {
+            Debug.LogWarning("Komponen CinemachineOrbitalFollow tidak ditemukan pada CinemachineCamera! Harap tambahkan komponen tersebut.");
+        }
+    }
+
+    // Menggunakan LateUpdate dengan Time.smoothDeltaTime untuk hasil pergerakan paling stabil
+    private void LateUpdate()
     {
         HandleCameraRotation();
         HandleCameraZoom();
     }
 
-    /// <summary>
-    /// Mengatur rotasi kamera ke SEGALA ARAH saat Klik Kanan (Mouse 1) ditekan dan ditahan.
-    /// </summary>
     private void HandleCameraRotation()
     {
-        if (Input.GetMouseButton(1)) // Klik Kanan ditahan
+        float rawMouseX = 0f;
+        float rawMouseY = 0f;
+
+        // Ambil input hanya saat Klik Kanan ditahan
+        if (Input.GetMouseButton(1))
         {
-            float mouseX = Input.GetAxis("Mouse X");
-            float mouseY = Input.GetAxis("Mouse Y");
+            rawMouseX = Input.GetAxis("Mouse X");
+            rawMouseY = Input.GetAxis("Mouse Y");
+        }
 
-            // Mode 1: Jika menggunakan CinemachineOrbitalFollow
-            if (orbitalFollow != null)
-            {
-                orbitalFollow.HorizontalAxis.Value += mouseX * rotationSpeedX * Time.deltaTime;
-                orbitalFollow.VerticalAxis.Value -= mouseY * rotationSpeedY * Time.deltaTime;
-            }
-            // Mode 2: Rotasi bebas ke segala arah berpatokan pada target
-            else if (cinemachineCam != null)
-            {
-                Transform targetTransform = cinemachineCam.LookAt != null ? cinemachineCam.LookAt : cinemachineCam.Follow;
+        // Menggunakan Time.smoothDeltaTime agar transisi frame rate tidak menyebabkan jitter/stutter
+        float dt = Time.smoothDeltaTime;
 
-                if (targetTransform != null)
-                {
-                    // Rotasi Horizontal (Sumbu Y Dunia)
-                    cinemachineCam.transform.RotateAround(targetTransform.position, Vector3.up, mouseX * rotationSpeedX * Time.deltaTime);
+        // Interpolasi halus untuk input mouse
+        smoothMouseX = Mathf.Lerp(smoothMouseX, rawMouseX, rotationSmoothness * dt);
+        smoothMouseY = Mathf.Lerp(smoothMouseY, rawMouseY, rotationSmoothness * dt);
 
-                    // Rotasi Vertikal (Sumbu X Lokal Kamera)
-                    cinemachineCam.transform.RotateAround(targetTransform.position, cinemachineCam.transform.right, -mouseY * rotationSpeedY * Time.deltaTime);
-                }
-            }
+        if (orbitalFollow != null && (Mathf.Abs(smoothMouseX) > 0.001f || Mathf.Abs(smoothMouseY) > 0.001f))
+        {
+            // Kontrol rotasi horizontal dan vertikal menggunakan sistem orbital Cinemachine 3.x
+            orbitalFollow.HorizontalAxis.Value += smoothMouseX * rotationSpeedX * dt;
+
+            float targetVertical = orbitalFollow.VerticalAxis.Value - (smoothMouseY * rotationSpeedY * dt);
+            orbitalFollow.VerticalAxis.Value = Mathf.Clamp(targetVertical, minVerticalAngle, maxVerticalAngle);
         }
     }
 
-    /// <summary>
-    /// Mengatur Scroll Mouse untuk Zoom In dan Zoom Out pada Cinemachine 3.x
-    /// </summary>
     private void HandleCameraZoom()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        float dt = Time.smoothDeltaTime;
 
         if (Mathf.Abs(scrollInput) > 0.01f)
         {
-            // Mode 1: Jika menggunakan CinemachineOrbitalFollow (Mengatur Radius Orbits Struct)
-            if (orbitalFollow != null)
-            {
-                // Mengambil nilai Radius dari Middle Orbit
-                float currentRadius = orbitalFollow.Orbits.Center.Radius;
-                float targetRadius = currentRadius - (scrollInput * zoomSpeed);
-                targetRadius = Mathf.Clamp(targetRadius, minZoom, maxZoom);
+            targetZoomRadius -= scrollInput * zoomSpeed;
+            targetZoomRadius = Mathf.Clamp(targetZoomRadius, minZoom, maxZoom);
+        }
 
-                // Update radius untuk Top, Center, dan Bottom Orbits
-                var orbits = orbitalFollow.Orbits;
-                orbits.Top.Radius = targetRadius * 0.5f;
-                orbits.Center.Radius = targetRadius;
-                orbits.Bottom.Radius = targetRadius * 1.2f;
+        if (orbitalFollow != null)
+        {
+            float currentRadius = orbitalFollow.Orbits.Center.Radius;
+            float smoothedRadius = Mathf.Lerp(currentRadius, targetZoomRadius, zoomSmoothness * dt);
 
-                // Terapkan kembali struct Orbits yang sudah diupdate
-                orbitalFollow.Orbits = orbits;
-            }
-            // Mode 2: Jika menggunakan CinemachineFollow biasa (Mengatur Offset Z)
-            else if (followComponent != null)
-            {
-                Vector3 currentOffset = followComponent.FollowOffset;
-                currentOffset.z += scrollInput * zoomSpeed;
-                currentOffset.z = Mathf.Clamp(currentOffset.z, -maxZoom, -minZoom);
-                followComponent.FollowOffset = currentOffset;
-            }
-            // Mode 3: Fallback Lens FOV Zoom
-            else if (cinemachineCam != null)
-            {
-                float targetFOV = cinemachineCam.Lens.FieldOfView - (scrollInput * zoomSpeed * 5f);
-                cinemachineCam.Lens.FieldOfView = Mathf.Clamp(targetFOV, 15f, 60f);
-            }
+            var orbits = orbitalFollow.Orbits;
+            orbits.Top.Radius = Mathf.Clamp(smoothedRadius * 0.5f, minZoom, maxZoom);
+            orbits.Center.Radius = Mathf.Clamp(smoothedRadius, minZoom, maxZoom);
+            orbits.Bottom.Radius = Mathf.Clamp(smoothedRadius * 1.2f, minZoom, maxZoom);
+
+            orbitalFollow.Orbits = orbits;
         }
     }
 }

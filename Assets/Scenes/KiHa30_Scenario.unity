@@ -4371,7 +4371,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 1
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -6222,9 +6222,29 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
+      propertyPath: maxZoom
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
       propertyPath: cinemachineCam
       value: 
       objectReference: {fileID: 1103785370}
+    - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
+      propertyPath: zoomSmoothness
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
+      propertyPath: maxVerticalAngle
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
+      propertyPath: minVerticalAngle
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7931159003219001895, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
+      propertyPath: rotationSmoothness
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8088483687332878707, guid: bbdc49f85858a6540b373fb1f9d7a7a2, type: 3}
       propertyPath: m_Name
       value: KiHa30
