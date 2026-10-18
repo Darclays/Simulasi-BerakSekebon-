@@ -6,6 +6,10 @@ public class PintuPenumpangController : MonoBehaviour
     [Header("Referensi Controller Kereta")]
     public keretaController2 keretaController;
 
+    [Header("Pengaturan UI Stasiun Akhir")]
+    [Tooltip("Drag GameObject UI yang ingin dinyalakan setelah pintu tertutup di stasiun akhir")]
+    public GameObject uiStasiunEnd;
+
     [Header("Pengaturan Input & Waktu")]
     public KeyCode tombolPintu = KeyCode.T;
     public float durasiGerakPintu = 7f;
@@ -23,8 +27,11 @@ public class PintuPenumpangController : MonoBehaviour
 
     [Header("Status Sistem")]
     public bool beradaDiAreaTrigger = false;
+    public bool beradaDiAreaEnd = false; // Status khusus untuk stasiun akhir
     public bool pintuTerbuka = false;
     public bool sedangDalamProses = false;
+
+    private bool isEndStationActive = false; // Penanda apakah saat ini berada di stasiun akhir
 
     void Start()
     {
@@ -37,6 +44,12 @@ public class PintuPenumpangController : MonoBehaviour
         {
             Debug.LogError("[PintuController] ERROR: keretaController2 tidak ditemukan di Parent!");
         }
+
+        // Pastikan UI dalam kondisi mati saat awal game
+        if (uiStasiunEnd != null && uiStasiunEnd.activeSelf)
+        {
+            uiStasiunEnd.SetActive(false);
+        }
     }
 
     void Update()
@@ -44,20 +57,25 @@ public class PintuPenumpangController : MonoBehaviour
         // 1. Deteksi peron secara fisik manual per frame
         CekAreaPeronManual();
 
+        // Gabungan status area (stasiun biasa atau stasiun akhir)
+        bool diAreaPeron = beradaDiAreaTrigger || beradaDiAreaEnd;
+
         // Debug tes tombol T
         if (Input.GetKeyDown(tombolPintu))
         {
             float speedSaatIni = (keretaController != null) ? keretaController.currentSpeed : -1f;
-            Debug.Log($"[PintuController] Tombol T Ditekan! Status -> Di Area Stasiun: {beradaDiAreaTrigger}, Sedang Proses: {sedangDalamProses}, Kecepatan: {speedSaatIni:F1} km/h");
+            Debug.Log($"[PintuController] Tombol T Ditekan! Status -> Di Area Peron: {diAreaPeron} (Biasa: {beradaDiAreaTrigger}, End: {beradaDiAreaEnd}), Sedang Proses: {sedangDalamProses}, Kecepatan: {speedSaatIni:F1} km/h");
         }
 
-        // 2. Eksekusi Buka/Tutup Pintu
-        if (beradaDiAreaTrigger && !sedangDalamProses && Input.GetKeyDown(tombolPintu))
+        // 2. Eksekusi Buka/Tutup Pintu (Berlaku untuk stasiun biasa maupun stasiun akhir dengan tombol T)
+        if (diAreaPeron && !sedangDalamProses && Input.GetKeyDown(tombolPintu))
         {
             if (keretaController != null && keretaController.currentSpeed <= 0.001f)
             {
                 if (!pintuTerbuka)
                 {
+                    // Catat apakah ini stasiun akhir saat tombol buka ditekan
+                    isEndStationActive = beradaDiAreaEnd;
                     StartCoroutine(ProsesBukaDanPenumpang());
                 }
                 else
@@ -81,27 +99,48 @@ public class PintuPenumpangController : MonoBehaviour
         // Mencari semua collider di sekitar kotak deteksi
         Collider[] hitColliders = Physics.OverlapBox(center, halfExtents, transform.rotation, layerStasiun);
 
-        bool terdeteksi = false;
+        bool terdeteksiBiasa = false;
+        bool terdeteksiEnd = false;
+
         foreach (var col in hitColliders)
         {
-            // Pengecekan apakah collider yang tersentuh memiliki Tag "AreaStasiun"
-            if (col.gameObject != gameObject && col.CompareTag("AreaStasiun"))
+            if (col.gameObject != gameObject)
             {
-                terdeteksi = true;
-                break;
+                // Cek apakah menyentuh peron biasa
+                if (col.CompareTag("AreaStasiun"))
+                {
+                    terdeteksiBiasa = true;
+                }
+                // Cek apakah menyentuh peron akhir
+                else if (col.CompareTag("AreaStasiunEnd") || col.name == "AreaStasiunEnd")
+                {
+                    terdeteksiEnd = true;
+                }
             }
         }
 
-        // Update status masukan/keluaran area peron
-        if (terdeteksi && !beradaDiAreaTrigger)
+        // Update status masuk/keluar area peron biasa
+        if (terdeteksiBiasa && !beradaDiAreaTrigger)
         {
             beradaDiAreaTrigger = true;
-            Debug.Log("[PintuController] >>> BERHASIL DETEKSI AREA PERON/STASIUN! Siap buka pintu jika kereta berhenti. <<<");
+            Debug.Log("[PintuController] >>> BERHASIL DETEKSI AREA PERON/STASIUN! Siap tekan 'T' jika kereta berhenti. <<<");
         }
-        else if (!terdeteksi && beradaDiAreaTrigger)
+        else if (!terdeteksiBiasa && beradaDiAreaTrigger)
         {
             beradaDiAreaTrigger = false;
             Debug.Log("[PintuController] <<< Keluar dari area Peron/Stasiun. >>>");
+        }
+
+        // Update status masuk/keluar area stasiun akhir
+        if (terdeteksiEnd && !beradaDiAreaEnd)
+        {
+            beradaDiAreaEnd = true;
+            Debug.Log("[PintuController] >>> BERHASIL DETEKSI STASIUN AKHIR (AreaStasiunEnd)! Siap tekan 'T' jika kereta berhenti. <<<");
+        }
+        else if (!terdeteksiEnd && beradaDiAreaEnd)
+        {
+            beradaDiAreaEnd = false;
+            Debug.Log("[PintuController] <<< Keluar dari area Stasiun Akhir. >>>");
         }
     }
 
@@ -160,16 +199,24 @@ public class PintuPenumpangController : MonoBehaviour
         if (keretaController != null)
         {
             keretaController.enabled = true;
-            Debug.Log("[PintuController] KONTROL KERETA DIAKTIFKAN KEMBALI. Kereta siap berjalan.");
+            Debug.Log("[PintuController] KONTROL KERETA DIAKTIFKAN KEMBALI.");
+        }
+
+        // KHUSUS STASIUN AKHIR: Nyalakan UI setelah pintu tertutup sepenuhnya
+        if (isEndStationActive && uiStasiunEnd != null)
+        {
+            uiStasiunEnd.SetActive(true);
+            Debug.Log("[PintuController] UI Stasiun End BERHASIL diaktifkan (Nyala)!");
         }
 
         sedangDalamProses = false;
     }
 
-    // Menampilkan kotak deteksi berwarna merah transparan di Editor Scene View
+    // Menampilkan kotak deteksi berwarna hijau/merah transparan di Editor Scene View
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = beradaDiAreaTrigger ? new Color(0f, 1f, 0f, 0.4f) : new Color(1f, 0f, 0f, 0.4f);
+        bool adaInteraksi = beradaDiAreaTrigger || beradaDiAreaEnd;
+        Gizmos.color = adaInteraksi ? new Color(0f, 1f, 0f, 0.4f) : new Color(1f, 0f, 0f, 0.4f);
         Matrix4x4 rotationMatrix = Matrix4x4.TRS(transform.TransformPoint(offsetKotakDeteksi), transform.rotation, Vector3.one);
         Gizmos.matrix = rotationMatrix;
         Gizmos.DrawCube(Vector3.zero, ukuranKotakDeteksi);

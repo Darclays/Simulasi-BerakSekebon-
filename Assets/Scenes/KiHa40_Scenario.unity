@@ -663,7 +663,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123217861}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1790,7 +1790,7 @@ GameObject:
   - component: {fileID: 355012330}
   m_Layer: 0
   m_Name: Nigger_peron2
-  m_TagString: AreaStasiun
+  m_TagString: AreaStasiunEnd
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1839,7 +1839,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355012328}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6986,7 +6986,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1649763287}
-  - {fileID: 1197531130}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7593,6 +7592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PintuPenumpangController
   keretaController: {fileID: 1338130309}
+  uiStasiunEnd: {fileID: 1110615899}
   tombolPintu: 116
   durasiGerakPintu: 7
   durasiProsesPenumpang: 7
@@ -7602,6 +7602,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   beradaDiAreaTrigger: 0
+  beradaDiAreaEnd: 0
   pintuTerbuka: 0
   sedangDalamProses: 0
 --- !u!4 &1184118752 stripped
@@ -7705,17 +7706,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1197531129}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1025035977}
-  m_Father: {fileID: 1110615903}
+  m_Father: {fileID: 1649763287}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000013351, y: -0.0000074506}
+  m_AnchoredPosition: {x: -0.000013351, y: -0}
   m_SizeDelta: {x: 120.4332, y: 28.2797}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1197531131
@@ -11009,7 +11010,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1197531130}
   m_Father: {fileID: 1110615903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11073,7 +11075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1659426787
 Transform:
   m_ObjectHideFlags: 0
@@ -11118,7 +11120,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659426786}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -14094,9 +14096,9 @@ SceneRoots:
   - {fileID: 1397316937}
   - {fileID: 889047771}
   - {fileID: 251546082}
-  - {fileID: 409738092}
   - {fileID: 2011163936}
   - {fileID: 1338130310}
+  - {fileID: 409738092}
   - {fileID: 1281179846}
   - {fileID: 1349031361}
   - {fileID: 1519381199}
