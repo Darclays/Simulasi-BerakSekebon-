@@ -6,6 +6,8 @@ TagManager:
   tags:
   - AreaStasiun
   - AreaStasiunEnd
+  - AreaStasiunKiri
+  - AreaStasiunEndKiri
   layers:
   - Default
   - TransparentFX
