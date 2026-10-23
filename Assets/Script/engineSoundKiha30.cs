@@ -7,7 +7,7 @@ public class engineSoundKiha30 : MonoBehaviour
     [Header("Reference to Controller")]
     public keretaController2 trainController;
 
-    [Header("Animator Reference")]
+    [Header("Animator Reference (Opsional untuk Bodi Kereta)")]
     public Animator trainAnimator;
     public string hornAnimatorParam = "PlayHorn";
 
@@ -56,10 +56,11 @@ public class engineSoundKiha30 : MonoBehaviour
             hornAudioSource.loop = false;
         }
 
-        if (trainAnimator == null)
-        {
-            trainAnimator = GetComponent<Animator>();
-        }
+        // PENGAMAN UTAMA: Mencegah script klakson mengendalikan Animator Pintu
+        // Jika Anda ingin animasi bodi kereta aktif saat klakson, pastikan trainAnimator 
+        // menempel di objek bodi kereta, BUKAN di objek pintu. 
+        // Jika tidak punya animator bodi, biarkan baris di bawah aktif untuk keamanan.
+        // trainAnimator = null; // Hapus komentar (//) di baris ini jika ingin benar-benar menonaktifkan animator klakson.
     }
 
     void Start()
@@ -118,13 +119,23 @@ public class engineSoundKiha30 : MonoBehaviour
     private IEnumerator PlayHornRoutine()
     {
         isHornPlaying = true;
-        hornAudioSource.PlayOneShot(hornClip);
-        if (trainAnimator != null) trainAnimator.SetTrigger(hornAnimatorParam);
-        yield return new WaitForSeconds(hornClip.length);
+        
+        if (hornAudioSource != null && hornClip != null)
+        {
+            hornAudioSource.PlayOneShot(hornClip);
+        }
+
+        // Hanya jalankan animator jika referensinya benar-benar ada dan valid
+        if (trainAnimator != null) 
+        {
+            trainAnimator.SetTrigger(hornAnimatorParam);
+        }
+
+        yield return new WaitForSeconds(hornClip != null ? hornClip.length : 1f);
         isHornPlaying = false;
     }
 
-    // --- FUNGSI BARU UNTUK UI MANAGER ---
+    // --- FUNGSI UNTUK UI MANAGER ---
     public void TriggerHornFromUI()
     {
         if (!isHornPlaying)
@@ -167,11 +178,11 @@ public class engineSoundKiha30 : MonoBehaviour
         }
         else if (previousSpeed >= 20f && currentSpeed < 40f && currentSpeed >= 20f)
         {
-            if (engineAudioSource.clip != down3_2) PlayTransitionSound(down3_2, idle3);
+            if (previousNotch != 2 || engineAudioSource.clip != down3_2) PlayTransitionSound(down3_2, idle3);
         }
         else if (previousSpeed >= 1f && currentSpeed < 20f && currentSpeed >= 1f)
         {
-            if (engineAudioSource.clip != down2_1) PlayTransitionSound(down2_1, idle2);
+            if (previousNotch != 1 || engineAudioSource.clip != down2_1) PlayTransitionSound(down2_1, idle2);
         }
     }
 

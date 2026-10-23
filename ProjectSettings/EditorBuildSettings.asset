@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/MAIN MENU.unity
+    guid: 7df4efeef99bce24286a5aa7691fb2ff
   - enabled: 1
     path: Assets/Scenes/KiHa40_Scenario.unity
     guid: f4ccde194f885e549ac170230e03d50a
